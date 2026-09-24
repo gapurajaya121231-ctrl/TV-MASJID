@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TV Masjid & Panel Admin Slide</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0b1d12; color: #ffffff; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        .admin-btn { position: fixed; bottom: 15px; right: 15px; background: #d4af37; color: #0b1d12; border: none; padding: 10px 18px; font-size: 14px; font-weight: bold; border-radius: 30px; cursor: pointer; z-index: 9999; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        header { background: linear-gradient(135deg, #134e2f, #1b5e3a); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid #d4af37; flex-shrink: 0; }
+        .masjid-title h1 { font-size: 26px; color: #d4af37; text-transform: uppercase; }
+        .masjid-title p { font-size: 13px; color: #cfd8dc; }
+        .live-date { font-size: 18px; font-weight: bold; color: #fff; text-align: right; }
+        .main-container { display: flex; flex: 1; padding: 20px; gap: 20px; overflow: hidden; }
+        .left-panel { width: 320px; display: flex; flex-direction: column; gap: 15px; flex-shrink: 0; }
+        .clock-box { background: #113822; padding: 15px; text-align: center; border-radius: 10px; border: 2px solid #d4af37; }
+        .clock-box h2 { font-size: 38px; color: #ffeb3b; }
+        .schedule-table { background: #113822; border-radius: 10px; overflow: hidden; border: 2px solid #d4af37; display: flex; flex-direction: column; }
+        .schedule-item { display: flex; justify-content: space-between; padding: 10px 15px; font-size: 18px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .right-panel { flex: 1; background: #113822; border-radius: 10px; border: 2px solid #d4af37; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .slide-content { width: 100%; height: 100%; display: flex; position: absolute; top: 0; left: 0; transition: opacity 0.5s ease-in-out; padding: 30px; box-sizing: border-box; }
+        .slide-content.pos-kiri { flex-direction: row; align-items: center; gap: 30px; }
+        .slide-content.pos-kanan { flex-direction: row-reverse; align-items: center; gap: 30px; }
+        .slide-content.pos-atas { flex-direction: column; align-items: center; text-align: center; gap: 20px; }
+        .slide-content.pos-background { flex-direction: column; justify-content: center; align-items: center; background-size: cover !important; background-position: center !important; text-align: center; }
+        .slide-img-container { flex-shrink: 0; display: flex; justify-content: center; align-items: center; }
+        .slide-img-container img { max-width: 100%; max-height: 100%; border-radius: 8px; object-fit: cover; border: 2px solid rgba(212, 175, 55, 0.5); }
+        .slide-text-box { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 15px; border-radius: 8px; }
+        .slide-text-box h2 { margin-bottom: 15px; line-height: 1.2; }
+        .slide-text-box p { line-height: 1.6; white-space: pre-line; }
+        footer { background: #134e2f; color: #ffeb3b; padding: 10px 0; font-size: 18px; font-weight: bold; border-top: 3px solid #d4af37; white-space: nowrap; overflow: hidden; flex-shrink: 0; }
+        #admin-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; overflow-y: auto; padding: 20px; }
+        .admin-card { background: #113822; max-width: 800px; margin: 30px auto; padding: 25px; border-radius: 12px; border: 2px solid #d4af37; color: #fff; }
+        .admin-card h2 { color: #d4af37; margin-bottom: 15px; border-bottom: 2px solid #134e2f; padding-bottom: 8px; }
+        .form-group { margin-bottom: 12px; display: flex; flex-direction: column; gap: 5px; }
+        .form-row { display: flex; gap: 10px; flex-wrap: wrap; }
+        .form-row .form-group { flex: 1; min-width: 150px; }
+        label { font-size: 13px; color: #cfd8dc; font-weight: bold; }
+        input, select, textarea { padding: 8px 12px; background: #0b1d12; border: 1px solid #1b5e3a; color: #fff; border-radius: 6px; font-size: 14px; width: 100%; }
+        textarea { resize: vertical; height: 80px; }
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+        button.btn { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .btn-save { background: #d4af37; color: #0b1d12; }
+        .btn-close { background: #c62828; color: #fff; }
+        .btn-add { background: #1b5e3a; color: #ffeb3b; border: 1px solid #d4af37; margin-bottom: 15px; }
+        .slide-list-item { background: #0b1d12; padding: 15px; border-radius: 6px; margin-bottom: 12px; border: 1px solid #1b5e3a; }
+    </style>
+</head>
+<body>
+
+    <button class="admin-btn" onclick="openAdmin()">⚙️ Atur Slide & Info</button>
+
+    <header>
+        <div class="masjid-title">
+            <h1>Masjid Al-Ikhlas</h1>
+            <p>Pusat Informasi & Kegiatan Dakwah</p>
+        </div>
+        <div class="live-date" id="date-display">Memuat Tanggal...</div>
+    </header>
+
+    <div class="main-container">
+        <div class="left-panel">
+            <div class="clock-box">
+                <h2 id="clock-display">00:00:00</h2>
+            </div>
+            <div class="schedule-table">
+                <div class="schedule-item"><span>Imsak</span> <span>04:15</span></div>
+                <div class="schedule-item"><span>Subuh</span> <span>04:25</span></div>
+                <div class="schedule-item"><span>Dzuhur</span> <span>11:50</span></div>
+                <div class="schedule-item"><span>Ashar</span> <span>15:05</span></div>
+                <div class="schedule-item"><span>Maghrib</span> <span>17:55</span></div>
+                <div class="schedule-item"><span>Isya</span> <span>19:05</span></div>
+            </div>
+        </div>
+        <div class="right-panel" id="tv-slide-container"></div>
+    </div>
+
+    <footer>
+        <marquee scrollamount="6">Selamat datang di Masjid Al-Ikhlas. Harap matikan handphone Anda dan jaga ketenangan selama di dalam area masjid.</marquee>
+    </footer>
+
+    <div id="admin-modal">
+        <div class="admin-card">
+            <h2>⚙️ Panel Pengaturan Slide Masjid</h2>
+            <p style="font-size:12px; color:#cfd8dc; margin-bottom:15px;">Semua perubahan langsung tersimpan di HP Anda dan otomatis tampil di TV.</p>
+            <button class="btn btn-add" onclick="addNewSlide()">➕ Tambah Slide Baru</button>
+            <div id="slide-editor-list"></div>
+            <div class="btn-group">
+                <button class="btn btn-save" onclick="saveAndApplyChanges()">💾 Simpan & Terapkan</button>
+                <button class="btn btn-close" onclick="closeAdmin()">Tutup Panel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let defaultSlides = [
+            {
+                id: 1, active: true, order: 1,
+                title: "KAJIAN SUBUH BERJAMAAH",
+                content: "Bersama Ustadz Ahmad, Lc.\nAhad, 28 September 2026\nBa'da Shalat Subuh sampai selesai.\nMari hadiri dan ajak keluarga tercinta.",
+                img: "https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?w=600",
+                pos: "pos-kiri", imgSize: "350px", titleSize: "32px", contentSize: "20px", fontBold: "bold", textAlign: "left", textColor: "#ffffff", bgColor: "transparent", duration: 8
+            },
+            {
+                id: 2, active: true, order: 2,
+                title: "LAPORAN INFAQ JUM'AT",
+                content: "Saldo Minggu Lalu: Rp 5.250.000\nPemasukan: Rp 3.100.000\nPengeluaran Operasional: Rp 1.200.000\nSaldo Akhir: Rp 7.150.000\nJazakumullah Khairan Katsiran atas infaq jama'ah.",
+                img: "", pos: "pos-atas", imgSize: "200px", titleSize: "28px", contentSize: "20px", fontBold: "normal", textAlign: "center", textColor: "#ffeb3b", bgColor: "#113822", duration: 7
+            }
+        ];
+
+        let slides = JSON.parse(localStorage.getItem('masjid_slides')) || defaultSlides;
+        let currentSlideIndex = 0;
+        let slideTimer = null;
+
+        function updateClock() {
+            const now = new Date();
+            let h = String(now.getHours()).padStart(2, '0');
+            let m = String(now.getMinutes()).padStart(2, '0');
+            let s = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock-display').innerText = `${h}:${m}:${s}`;
+            const opt = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date-display').innerText = now.toLocaleDateString('id-ID', opt);
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        function renderTVSlides() {
+            const container = document.getElementById('tv-slide-container');
+            const activeSlides = slides.filter(s => s.active).sort((a, b) => a.order - b.order);
+            if (activeSlides.length === 0) {
+                container.innerHTML = `<h3 style="color:#d4af37;">Tidak ada slide aktif. Silakan atur di tombol bawah.</h3>`;
+                return;
+            }
+            if (currentSlideIndex >= activeSlides.length) currentSlideIndex = 0;
+            const slide = activeSlides[currentSlideIndex];
+            let imgHTML = slide.img ? `<div class="slide-img-container" style="width:${slide.imgSize};"><img src="${slide.img}" style="width:100%; height:auto;"></div>` : '';
+            let bgStyle = slide.pos === 'pos-background' && slide.img ? `background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('${slide.img}');` : `background-color: ${slide.bgColor};`;
+
+            container.innerHTML = `
+                <div class="slide-content ${slide.pos}" style="${bgStyle}">
+                    ${slide.pos !== 'pos-background' ? imgHTML : ''}
+                    <div class="slide-text-box" style="text-align: ${slide.textAlign}; color: ${slide.textColor};">
+                        <h2 style="font-size: ${slide.titleSize}; font-weight: ${slide.fontBold};">${slide.title}</h2>
+                        <p style="font-size: ${slide.contentSize};">${slide.content}</p>
+                    </div>
+                </div>
+            `;
+            clearTimeout(slideTimer);
+            slideTimer = setTimeout(() => {
+                currentSlideIndex = (currentSlideIndex + 1) % activeSlides.length;
+                renderTVSlides();
+            }, (slide.duration || 5) * 1000);
+        }
+
+        function openAdmin() {
+            document.getElementById('admin-modal').style.display = 'block';
+            buildAdminForm();
+        }
+
+        function closeAdmin() {
+            document.getElementById('admin-modal').style.display = 'none';
+            renderTVSlides();
+        }
+
+        function buildAdminForm() {
+            const listContainer = document.getElementById('slide-editor-list');
+            listContainer.innerHTML = '';
+            slides.forEach((s, idx) => {
+                listContainer.innerHTML += `
+                    <div class="slide-list-item">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <strong>Slide #${idx + 1} (${s.title || 'Tanpa Judul'})</strong>
+                            <div>
+                                <label><input type="checkbox" id="active_${idx}" ${s.active ? 'checked' : ''}> Aktif</label>
+                                <button class="btn" style="background:#c62828; color:#fff; padding:4px 8px; margin-left:10px;" onclick="deleteSlide(${idx})">Hapus</button>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Judul</label><input type="text" id="title_${idx}" value="${s.title}"></div>
+                            <div class="form-group"><label>Urutan</label><input type="number" id="order_${idx}" value="${s.order}"></div>
+                            <div class="form-group"><label>Durasi (detik)</label><input type="number" id="duration_${idx}" value="${s.duration || 5}"></div>
+                        </div>
+                        <div class="form-group"><label>Isi Teks / Deskripsi</label><textarea id="content_${idx}">${s.content}</textarea></div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Link URL Gambar</label><input type="text" id="img_${idx}" value="${s.img}" placeholder="https://..."></div>
+                            <div class="form-group"><label>Posisi Gambar</label>
+                                <select id="pos_${idx}">
+                                    <option value="pos-kiri" ${s.pos==='pos-kiri'?'selected':''}>Kiri</option>
+                                    <option value="pos-kanan" ${s.pos==='pos-kanan'?'selected':''}>Kanan</option>
+                                    <option value="pos-atas" ${s.pos==='pos-atas'?'selected':''}>Atas</option>
+                                    <option value="pos-background" ${s.pos==='pos-background'?'selected':''}>Background Penuh</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group"><label>Ukuran Judul</label><input type="text" id="titleSize_${idx}" value="${s.titleSize || '28px'}"></div>
+                            <div class="form-group"><label>Ukuran Isi</label><input type="text" id="contentSize_${idx}" value="${s.contentSize || '18px'}"></div>
+                            <div class="form-group"><label>Perataan Teks</label>
+                                <select id="textAlign_${idx}">
+                                    <option value="left" ${s.textAlign==='left'?'selected':''}>Kiri</option>
+                                    <option value="center" ${s.textAlign==='center'?'selected':''}>Tengah</option>
+                                    <option value="right" ${s.textAlign==='right'?'selected':''}>Kanan</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function addNewSlide() {
+            slides.push({
+                id: Date.now(), active: true, order: slides.length + 1,
+                title: "PENGUMUMAN BARU", content: "Tulis isi pengumuman di sini...",
+                img: "", pos: "pos-kiri", imgSize: "350px", titleSize: "28px", contentSize: "18px", fontBold: "bold", textAlign: "left", textColor: "#ffffff", bgColor: "transparent", duration: 6
+            });
+            buildAdminForm();
+        }
+
+        function deleteSlide(idx) {
+            slides.splice(idx, 1);
+            buildAdminForm();
+        }
+
+        function saveAndApplyChanges() {
+            slides.forEach((s, idx) => {
+                s.active = document.getElementById(`active_${idx}`).checked;
+                s.title = document.getElementById(`title_${idx}`).value;
+                s.order = parseInt(document.getElementById(`order_${idx}`).value) || 1;
+                s.duration = parseInt(document.getElementById(`duration_${idx}`,).value) || 5;
+                s.content = document.getElementById(`content_${idx}`).value;
+                s.img = document.getElementById(`img_${idx}`).value;
+                s.pos = document.getElementById(`pos_${idx}`).value;
+                s.titleSize = document.getElementById(`titleSize_${idx}`).value;
+                s.contentSize = document.getElementById(`contentSize_${idx}`).value;
+                s.textAlign = document.getElementById(`textAlign_${idx}`).value;
+            });
+            localStorage.setItem('masjid_slides', JSON.stringify(slides));
+            alert("Berhasil disimpan!");
+            closeAdmin();
+        }
+
+        renderTVSlides();
+    </script>
+</body>
+</html>
