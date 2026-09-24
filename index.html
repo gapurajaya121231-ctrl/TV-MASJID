@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TV Masjid Baitul Jannah</title>
+    <title>TV Masjid & Panel Admin</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
-        /* Memastikan halaman pas memenuhi layar TV tanpa scroll */
         body { 
             background-color: #0b1d32; 
             color: #ffffff; 
@@ -20,7 +19,6 @@
             position: relative; 
         }
         
-        /* Background Banner Overlay */
         .bg-overlay { 
             position: absolute; 
             top: 0; 
@@ -31,7 +29,6 @@
             z-index: -1; 
         }
 
-        /* Header Layout */
         header { 
             display: flex; 
             justify-content: space-between; 
@@ -46,13 +43,11 @@
         .mosque-text h1 { font-size: 2.8vh; font-weight: 700; letter-spacing: 1px; color: #ffffff; text-transform: uppercase; }
         .mosque-text p { font-size: 1.3vh; color: #cbd5e1; margin-top: 0.2vh; }
 
-        /* Main Clock & Countdown Top */
         .main-clock { text-align: right; }
         .clock-time { font-size: 5vh; font-weight: 700; color: #ffb703; line-height: 1; font-family: monospace; }
         .clock-date { font-size: 1.5vh; color: #e2e8f0; margin-top: 0.4vh; font-weight: 500; }
         .hijri-date { font-size: 1.3vh; color: #ffb703; margin-top: 0.2vh; }
 
-        /* Content Body Grid */
         .content-body { 
             display: grid; 
             grid-template-columns: 28vw 1fr 28vw; 
@@ -62,20 +57,17 @@
             align-items: center; 
         }
 
-        /* Prayer Times Table */
         .schedule-box { background: rgba(15, 32, 59, 0.85); border-radius: 1vh; border: 1px solid rgba(255,183,3, 0.3); overflow: hidden; box-shadow: 0 0.8vh 3vh rgba(0,0,0,0.3); }
         .schedule-title { background: #ffb703; color: #000; font-weight: 700; font-size: 1.6vh; text-align: center; padding: 1.2vh; text-transform: uppercase; letter-spacing: 1px; }
         .schedule-item { display: flex; justify-content: space-between; padding: 1.1vh 1.8vw; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 1.7vh; }
         .schedule-item:last-child { border-bottom: none; }
         .schedule-item.active { background: #ffb703; color: #000; font-weight: bold; }
 
-        /* Center Display / Countdown to Next Prayer */
         .center-display { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .next-prayer-box { background: rgba(15, 32, 59, 0.9); border: 1px solid rgba(255,183,3,0.4); padding: 3vh 2vw; border-radius: 1.5vh; box-shadow: 0 1vh 3vh rgba(0,0,0,0.4); width: 100%; max-width: 35vw; }
         .next-label { font-size: 1.8vh; color: #ffb703; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; margin-bottom: 1vh; }
         .next-countdown { font-size: 5.5vh; font-weight: 700; color: #ffffff; font-family: monospace; }
 
-        /* Right Side Widget (Photo / Infak QRIS) */
         .right-widget { display: flex; flex-direction: column; gap: 1.5vh; }
         .widget-card { background: rgba(15, 32, 59, 0.85); border-radius: 1vh; border: 1px solid rgba(255,183,3,0.3); overflow: hidden; text-align: center; padding: 1.2vh; }
         .widget-card img { width: 100%; height: 12vh; object-fit: cover; border-radius: 0.6vh; margin-bottom: 0.8vh; }
@@ -83,8 +75,8 @@
         .infak-desc { font-size: 1.1vh; color: #cbd5e1; line-height: 1.3; }
         .bank-info { font-size: 1.4vh; font-weight: bold; color: #fff; margin-top: 0.6vh; background: rgba(0,0,0,0.3); padding: 0.6vh; border-radius: 0.5vh; }
 
-        /* Running Text Footer */
-        .footer-ticker { background: #ffb703; color: #000; display: flex; align-items: center; padding: 1vh 0; overflow: hidden; white-space: nowrap; font-weight: bold; font-size: 1.8vh; }
+        /* Running Text Footer Dinamis */
+        .footer-ticker { background: #ffb703; color: #000; display: flex; align-items: center; padding: 1vh 0; overflow: hidden; white-space: nowrap; font-weight: bold; }
         .ticker-label { background: #000; color: #ffb703; padding: 1vh 2vw; text-transform: uppercase; margin-right: 1.5vw; font-weight: 800; letter-spacing: 1px; }
         .ticker-text { display: inline-block; animation: marquee 25s linear infinite; }
 
@@ -92,6 +84,19 @@
             0% { transform: translateX(100vw); }
             100% { transform: translateX(-100%); }
         }
+
+        /* Tombol & Modal Admin */
+        .admin-btn { position: fixed; bottom: 15px; right: 15px; background: #ffb703; color: #000; border: none; padding: 10px 18px; border-radius: 30px; font-weight: bold; cursor: pointer; z-index: 999; box-shadow: 0 4px 15px rgba(0,0,0,0.4); font-size: 14px; }
+        .admin-modal { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: #0f203b; border: 2px solid #ffb703; padding: 25px; border-radius: 12px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; color: #fff; }
+        .modal-content h2 { margin-bottom: 15px; color: #ffb703; font-size: 20px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 13px; margin-bottom: 5px; color: #cbd5e1; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: #0b1d32; color: #fff; font-size: 14px; }
+        .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        .modal-buttons button { padding: 8px 15px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; }
+        .btn-save { background: #ffb703; color: #000; }
+        .btn-close { background: #475569; color: #fff; }
     </style>
 </head>
 <body>
@@ -101,11 +106,11 @@
     <header>
         <div class="mosque-info">
             <div class="mosque-logo">
-                <img src="https://i.ibb.co.com/6X4b4g7/logo-masjid.png" alt="Logo Masjid" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2908/2908797.png'">
+                <img id="display-logo" src="https://i.ibb.co.com/6X4b4g7/logo-masjid.png" alt="Logo" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2908/2908797.png'">
             </div>
             <div class="mosque-text">
-                <h1>Masjid Baitul Jannah</h1>
-                <p>Jl. Hang Jebat, Kampung Tengah, Kec. Nongsa, Kota Batam</p>
+                <h1 id="display-name">Masjid Baitul Jannah</h1>
+                <p id="display-address">Jl. Hang Jebat, Kampung Tengah, Kec. Nongsa, Kota Batam</p>
             </div>
         </div>
         <div class="main-clock">
@@ -120,13 +125,13 @@
         <!-- Jadwal Sholat -->
         <div class="schedule-box">
             <div class="schedule-title">Jadwal Shalat</div>
-            <div class="schedule-item"><span>Imsak</span><span>04:28</span></div>
-            <div class="schedule-item active"><span>Subuh</span><span>04:38</span></div>
-            <div class="schedule-item"><span>Syuruq</span><span>05:55</span></div>
-            <div class="schedule-item"><span>Dzhuhur</span><span>11:58</span></div>
-            <div class="schedule-item"><span>Ashar</span><span>15:01</span></div>
-            <div class="schedule-item"><span>Maghrib</span><span>18:01</span></div>
-            <div class="schedule-item"><span>Isya</span><span>19:10</span></div>
+            <div class="schedule-item"><span>Imsak</span><span id="s-imsak">04:28</span></div>
+            <div class="schedule-item active"><span>Subuh</span><span id="s-subuh">04:38</span></div>
+            <div class="schedule-item"><span>Syuruq</span><span id="s-syuruq">05:55</span></div>
+            <div class="schedule-item"><span>Dzhuhur</span><span id="s-dzuhur">11:58</span></div>
+            <div class="schedule-item"><span>Ashar</span><span id="s-ashar">15:01</span></div>
+            <div class="schedule-item"><span>Maghrib</span><span id="s-maghrib">18:01</span></div>
+            <div class="schedule-item"><span>Isya</span><span id="s-isya">19:10</span></div>
         </div>
 
         <!-- Center CountDown -->
@@ -137,33 +142,99 @@
             </div>
         </div>
 
-        <!-- Widget Kanan (Kegiatan & Infak) -->
+        <!-- Widget Kanan -->
         <div class="right-widget">
             <div class="widget-card">
-                <img src="https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&w=500&q=80" alt="Kegiatan">
-                <div class="infak-title">Kajian Rutin & Kegiatan</div>
-                <div class="infak-desc">Mari makmurkan masjid dengan hadir di kajian ba'da Maghrib.</div>
+                <img id="display-img" src="https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&w=500&q=80" alt="Kegiatan">
+                <div class="infak-title" id="display-infak-title">Kajian Rutin & Kegiatan</div>
+                <div class="infak-desc" id="display-infak-desc">Mari makmurkan masjid dengan hadir di kajian ba'da Maghrib.</div>
             </div>
             <div class="widget-card" style="padding: 0.8vh;">
                 <div class="infak-title" style="font-size: 1.3vh;">Infak & Sedekah</div>
-                <div class="infak-desc" style="font-size: 1vh;">Bank BRK Syariah</div>
-                <div class="bank-info">186-20-01208<br><span style="font-size:0.9vh; font-weight:normal;">a.n. MASJID BAITUL JANNAH</span></div>
+                <div class="infak-desc" id="display-bank-name" style="font-size: 1vh;">Bank BRK Syariah</div>
+                <div class="bank-info" id="display-bank-rek">186-20-01208<br><span style="font-size:0.9vh; font-weight:normal;" id="display-bank-owner">a.n. MASJID BAITUL JANNAH</span></div>
             </div>
         </div>
     </div>
 
     <!-- Footer Running Text -->
     <div class="footer-ticker">
-        <div class="ticker-label">INFO</div>
-        <div class="ticker-text">Selamat datang di Masjid Baitul Jannah — marilah kita memperbanyak shalat sunnah, membaca Al-Qur'an, dan menjaga kebersihan masjid bersama.</div>
+        <div class="ticker-label" id="ticker-label-box">INFO</div>
+        <div class="ticker-text" id="display-ticker">Selamat datang di Masjid Baitul Jannah — marilah kita memperbanyak shalat sunnah, membaca Al-Qur'an, dan menjaga kebersihan masjid bersama.</div>
+    </div>
+
+    <!-- Tombol & Panel Admin -->
+    <button class="admin-btn" onclick="openAdmin()">⚙️ Atur Info & Ukuran Huruf</button>
+
+    <div class="admin-modal" id="adminModal">
+        <div class="modal-content">
+            <h2>Pengaturan TV Masjid</h2>
+            <div class="form-group"><label>Nama Masjid</label><input type="text" id="input-name"></div>
+            <div class="form-group"><label>Alamat Masjid</label><input type="text" id="input-address"></div>
+            <div class="form-group"><label>Teks Berjalan (Running Text)</label><textarea id="input-ticker" rows="2"></textarea></div>
+            
+            <!-- Pengaturan Ukuran Huruf Running Text -->
+            <div class="form-group">
+                <label>Ukuran Huruf Running Text</label>
+                <select id="input-ticker-size">
+                    <option value="1.5vh">Kecil</option>
+                    <option value="1.8vh" selected>Sedang (Standar)</option>
+                    <option value="2.3vh">Besar</option>
+                    <option value="2.8vh">Sangat Besar</option>
+                </select>
+            </div>
+
+            <div class="form-group"><label>Nomor Rekening Bank & Infak</label><input type="text" id="input-bank-rek"></div>
+            <div class="form-group"><label>Atas Nama Rekening</label><input type="text" id="input-bank-owner"></div>
+            <div class="modal-buttons">
+                <button class="btn-close" onclick="closeAdmin()">Batal</button>
+                <button class="btn-save" onclick="saveAdmin()">Simpan Pengaturan</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Update Live Clock
+        // Live Clock
         setInterval(() => {
             const now = new Date();
             document.getElementById('live-clock').innerText = now.toTimeString().split(' ')[0];
         }, 1000);
+
+        // Load Settings from LocalStorage
+        window.onload = function() {
+            if(localStorage.getItem('mosqueName')) {
+                document.getElementById('display-name').innerText = localStorage.getItem('mosqueName');
+                document.getElementById('display-address').innerText = localStorage.getItem('mosqueAddress');
+                document.getElementById('display-ticker').innerText = localStorage.getItem('mosqueTicker');
+                document.getElementById('display-bank-rek').innerHTML = localStorage.getItem('bankRek') + '<br><span style="font-size:0.9vh; font-weight:normal;">' + localStorage.getItem('bankOwner') + '</span>';
+            }
+            // Terapkan ukuran font running text yang tersimpan
+            const savedTickerSize = localStorage.getItem('tickerSize') || '1.8vh';
+            document.querySelector('.footer-ticker').style.fontSize = savedTickerSize;
+        };
+
+        function openAdmin() {
+            document.getElementById('input-name').value = document.getElementById('display-name').innerText;
+            document.getElementById('input-address').value = document.getElementById('display-address').innerText;
+            document.getElementById('input-ticker').value = document.getElementById('display-ticker').innerText;
+            document.getElementById('input-bank-rek').value = document.getElementById('display-bank-rek').innerText.split('\n')[0];
+            document.getElementById('input-ticker-size').value = localStorage.getItem('tickerSize') || '1.8vh';
+            document.getElementById('adminModal').style.display = 'flex';
+        }
+
+        function closeAdmin() {
+            document.getElementById('adminModal').style.display = 'none';
+        }
+
+        function saveAdmin() {
+            localStorage.setItem('mosqueName', document.getElementById('input-name').value);
+            localStorage.setItem('mosqueAddress', document.getElementById('input-address').value);
+            localStorage.setItem('mosqueTicker', document.getElementById('input-ticker').value);
+            localStorage.setItem('bankRek', document.getElementById('input-bank-rek').value);
+            localStorage.setItem('bankOwner', document.getElementById('input-bank-owner').value);
+            localStorage.setItem('tickerSize', document.getElementById('input-ticker-size').value);
+            location.reload();
+        }
     </script>
 </body>
 </html>
