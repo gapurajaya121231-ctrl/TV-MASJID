@@ -2,283 +2,168 @@
 <html lang="id">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-  <meta name="description" content="Display digital masjid mandiri">
-  <title>Display Masjid</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#061325">
+  <title>Masjid Display Mandiri</title>
   <style>
-    :root{--bg:#061325;--surface:#0b1d3a;--primary:#0b1d3a;--secondary:#061325;--accent:#f6be3c;--text:#f8fafc;--muted:#cbd5e1;--panel:.9;--scale:1;--clock:1;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:#020817}
-    *{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden;background:#020817}button,input,select{font:inherit}button{cursor:pointer}
-    #app{height:100%;width:100%;position:relative}.screen{height:100%;width:100%;position:relative;overflow:hidden;background:var(--bg);color:var(--text)}
-    .grain{position:absolute;inset:0;pointer-events:none;opacity:.18;background-image:linear-gradient(135deg,rgba(255,255,255,.035) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.035) 50%,rgba(255,255,255,.035) 75%,transparent 75%);background-size:8px 8px}
-    .gold-line{height:5px;background:var(--accent);box-shadow:0 0 25px color-mix(in srgb,var(--accent),transparent 45%)}
-    .header{display:flex;align-items:center;gap:22px;padding:28px 48px 10px;position:relative;z-index:2}.logo{width:76px;height:76px;border-radius:50%;object-fit:contain;background:#fff;padding:5px}.header-copy{min-width:0}.name{font-size:clamp(20px,2.25vw,44px);font-weight:900;letter-spacing:.09em;text-transform:uppercase}.address{font-size:clamp(12px,1vw,20px);color:var(--muted);margin-top:5px}.main{height:calc(100% - 178px);display:grid;grid-template-columns:minmax(250px,27%) 1fr minmax(270px,30%);gap:28px;padding:20px 48px 28px;position:relative;z-index:2}.panel{background:color-mix(in srgb,var(--primary) calc(var(--panel)*100%),transparent);border:1px solid color-mix(in srgb,var(--accent),transparent 72%);border-radius:20px;overflow:hidden;box-shadow:0 15px 45px #0005}.prayer-title{padding:14px;text-align:center;background:var(--accent);color:var(--secondary);font-weight:900;letter-spacing:.2em;text-transform:uppercase;font-size:clamp(13px,1.15vw,22px)}.prayers{padding:12px}.prayer{display:flex;justify-content:space-between;align-items:center;padding:clamp(8px,1vh,17px) 16px;border-radius:12px;gap:12px;font-size:clamp(15px,1.55vw,29px)}.prayer b{font-family:monospace;font-size:1.08em}.prayer.active{background:var(--accent);color:var(--secondary);font-weight:800}.center{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:20px;text-align:center;min-width:0}.clock{font-family:monospace;font-size:clamp(55px,9.5vw,180px);font-weight:800;letter-spacing:-.06em;color:var(--accent);line-height:1}.date{font-size:clamp(15px,1.5vw,28px);display:grid;gap:6px}.date div:last-child{color:#fcd34d}.next-label{font-size:clamp(12px,1.1vw,21px);font-weight:800;letter-spacing:.28em;text-transform:uppercase;color:var(--accent)}.countdown{font:700 clamp(32px,4vw,76px) monospace}.soon{animation:pulse 1.4s infinite}.media{display:flex;flex-direction:column;gap:18px;min-height:0}.photo{min-height:0;flex:1;position:relative;overflow:hidden;border:3px solid var(--accent);border-radius:20px;background:#101827}.photo img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;transition:opacity 1s}.photo:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,#061325aa)}.content{height:30%;min-height:110px;padding:22px;background:color-mix(in srgb,var(--primary) calc(var(--panel)*100%),transparent);border-radius:20px;overflow:auto}.content h2{margin:0 0 9px;color:var(--accent);font-size:clamp(18px,1.7vw,31px)}.content p{margin:0;color:#eef2f7;line-height:1.5;font-size:clamp(13px,1vw,19px)}.content .bank{margin-top:10px;font-family:monospace}.ticker{height:58px;display:flex;align-items:center;background:#020817e8;position:absolute;bottom:0;left:0;right:0;z-index:3;overflow:hidden}.ticker-label{height:100%;display:flex;align-items:center;padding:0 24px;background:var(--accent);color:var(--secondary);font-weight:900;letter-spacing:.14em}.ticker-track{white-space:nowrap;animation:marquee 28s linear infinite;padding-left:100%;font-size:clamp(16px,1.4vw,26px)}.ticker-track span{padding:0 80px}.hint{position:absolute;right:24px;bottom:74px;color:#fff9;background:#0009;border-radius:99px;padding:9px 14px;font-size:13px;z-index:6}.overlay{position:absolute;z-index:20;inset:0;display:none;place-items:center;background:#030a16ee;text-align:center}.overlay.show{display:grid}.overlay-card{padding:48px;border:2px solid var(--accent);border-radius:24px;box-shadow:0 0 80px #f59e0b55}.overlay-card strong{display:block;color:var(--accent);font-size:clamp(28px,5vw,84px)}.overlay-card span{display:block;margin-top:15px;font-size:clamp(20px,2.6vw,46px)}
-    
-    /* PENGATURAN AREA APLIKASI */
-    .tools{position:absolute;top:14px;right:14px;z-index:100;display:flex;gap:10px}
-    .tool{background:#0b1d3a;color:#fff;border:2px solid var(--accent);border-radius:12px;width:50px;height:50px;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 4px 15px rgba(0,0,0,0.5);touch-action:manipulation}
-    .settings{position:fixed;z-index:9999;top:0;right:0;width:min(420px,100vw);height:100%;overflow-y:auto;padding:24px;background:#071326f9;border-left:1px solid #ffffff30;transform:translateX(100%);transition:transform .3s ease-in-out;box-shadow:-10px 0 30px #0008}
-    .settings.open{transform:translateX(0)}
-    .settings-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;border-bottom:1px solid #ffffff20;padding-bottom:10px}
-    .settings-header h2{margin:0;font-size:20px}
-    .close-icon-btn{background:transparent;border:0;color:#fff;font-size:28px;padding:4px 10px;line-height:1}
-    .setting{display:grid;gap:7px;margin:15px 0}
-    .setting label{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:#a9b9ce}
-    .setting input,.setting select,.settings textarea{width:100%;background:#0d203c;border:1px solid #315071;color:#fff;border-radius:8px;padding:12px;font-size:16px}
-    .colors{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .colors input{height:46px;padding:3px}
-    .actions{display:flex;gap:10px;position:sticky;bottom:0;background:#071326;padding:15px 0 5px;margin-top:20px}
-    .actions button{flex:1;border:0;border-radius:8px;padding:14px;font-weight:700;font-size:15px}
-    .save{background:var(--accent);color:var(--secondary)}
-    .reset{background:#1e3857;color:#fff}
-    .close{background:transparent;color:#fff;border:1px solid #46617e!important}
-    .layout-note{color:#9fb1c9;font-size:12px;line-height:1.45}
-
-    .layout-cinematic .screen{background-image:linear-gradient(#06132599,#061325e8),var(--hero);background-size:cover;background-position:center}.layout-cinematic .photo{display:none}.layout-cinematic .main{grid-template-columns:30% 1fr 30%}.layout-ultra_wide .main{display:flex;flex-direction:column}.layout-ultra_wide .center{order:1;flex:1}.layout-ultra_wide .media{display:none}.layout-ultra_wide .prayers{display:grid;grid-template-columns:repeat(7,1fr)}.layout-ultra_wide .prayer-title{display:none}.layout-simplicity .panel,.layout-simplicity .content{background:#f8fafc;color:#071326;border:0}.layout-simplicity .prayer{color:#071326}.layout-simplicity .prayer.active{color:#fff}.layout-simplicity .main{grid-template-columns:34% 1fr}.layout-simplicity .media{display:none}.layout-horizontal .main{display:flex;flex-direction:column}.layout-horizontal .center{flex:1}.layout-horizontal .left{order:3}.layout-horizontal .prayers{display:grid;grid-template-columns:repeat(7,1fr)}.layout-horizontal .prayer-title{display:none}.layout-horizontal .media{display:none}.layout-vertical .main{display:flex;flex-direction:column}.layout-vertical .center{order:2}.layout-vertical .media{order:3}.layout-vertical .left{order:1}.layout-vertical .media .photo{min-height:55%}.layout-digital_clock .main{display:block}.layout-digital_clock .left,.layout-digital_clock .media{display:none}.layout-digital_clock .center{height:100%}.layout-digital_clock .clock{font-size:clamp(70px,16vw,290px)}.layout-prayer_focus .main{grid-template-columns:24% 1fr 24%}.layout-prayer_focus .clock{font-size:clamp(70px,12vw,220px)}
-    @keyframes marquee{to{transform:translateX(-100%)}}@keyframes pulse{50%{text-shadow:0 0 28px var(--accent)}}
-    @media(max-width:900px){.header{padding:18px 20px 8px}.main{height:calc(100% - 125px);padding:10px 20px 20px;gap:12px;grid-template-columns:28% 1fr}.media{display:none!important}.name{font-size:clamp(16px,3vw,28px)}.address{font-size:12px}.logo{width:48px;height:48px}.clock{font-size:clamp(45px,11vw,100px)}.ticker{height:43px}.hint{display:none}.layout-horizontal .main,.layout-ultra_wide .main{display:flex}.layout-horizontal .prayers,.layout-ultra_wide .prayers{grid-template-columns:repeat(4,1fr)}.layout-simplicity .main,.layout-prayer_focus .main{display:block}.layout-simplicity .left,.layout-prayer_focus .left{display:none}}
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+    :root { --navy:#061325; --navy-2:#0b1d3a; --panel:#10294a; --gold:#f6be3c; --emerald:#10b981; --white:#f8fafc; --muted:#a8b5c7; --line:rgba(255,255,255,.12); }
+    * { box-sizing:border-box; }
+    html,body { margin:0; min-height:100%; background:#030a14; color:var(--white); font-family:'DM Sans',sans-serif; }
+    button,input,select,textarea { font:inherit; }
+    button { cursor:pointer; }
+    .app { min-height:100vh; background:radial-gradient(circle at 72% 15%, rgba(16,185,129,.12), transparent 27rem), linear-gradient(135deg,#030a14,#0b1d3a 56%,#061325); }
+    .topbar { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:1rem 1.5rem; border-bottom:1px solid var(--line); background:rgba(3,10,20,.86); backdrop-filter:blur(16px); position:sticky; top:0; z-index:10; }
+    .brand { display:flex; gap:.8rem; align-items:center; }
+    .brand-mark { width:2.6rem; height:2.6rem; display:grid; place-items:center; color:#101b2d; background:var(--gold); border-radius:12px; font-size:1.35rem; }
+    .brand strong { display:block; font-size:.98rem; letter-spacing:.08em; text-transform:uppercase; }
+    .brand span { color:var(--muted); font-size:.75rem; }
+    .top-actions { display:flex; gap:.6rem; }
+    .icon-btn,.primary-btn,.ghost-btn { border:1px solid var(--line); border-radius:9px; color:var(--white); background:rgba(255,255,255,.06); padding:.65rem .85rem; transition:.2s ease; }
+    .icon-btn:hover,.ghost-btn:hover { border-color:var(--gold); background:rgba(246,190,60,.1); }
+    .primary-btn { border-color:var(--gold); background:var(--gold); color:#081426; font-weight:700; }
+    .primary-btn:hover { filter:brightness(1.08); }
+    .workspace { display:grid; grid-template-columns:minmax(0,1fr) 360px; min-height:calc(100vh - 4.8rem); }
+    .screen-wrap { min-width:0; padding:clamp(1rem,3vw,3rem); display:flex; align-items:center; justify-content:center; }
+    .screen { position:relative; width:min(100%, 1240px); aspect-ratio:16/9; overflow:hidden; border:1px solid rgba(246,190,60,.35); border-radius:10px; background:var(--navy); box-shadow:0 24px 90px rgba(0,0,0,.42); color:var(--white); --scale:1; }
+    .screen.fullscreen { border:0; border-radius:0; width:100vw; height:100vh; aspect-ratio:auto; }
+    .screen h1,.screen h2,.screen h3,.screen p { margin:0; }
+    .screen-bg { position:absolute; inset:0; background-size:cover; background-position:center; opacity:.28; transition:background-image 1s ease; }
+    .screen-bg:after { content:''; position:absolute; inset:0; background:linear-gradient(180deg,rgba(6,19,37,.2),rgba(6,19,37,.86)); }
+    .tv-content { position:relative; z-index:1; height:100%; display:flex; flex-direction:column; padding:3.2% 4%; }
+    .tv-header { display:flex; align-items:center; gap:1.3rem; flex-shrink:0; }
+    .logo { width:clamp(2.8rem,6vw,5.4rem); aspect-ratio:1; border-radius:50%; object-fit:cover; border:2px solid var(--gold); background:#fff; }
+    .mosque-name { font-size:clamp(1rem,2.6vw,2.6rem); font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+    .mosque-address,.date-line { color:rgba(255,255,255,.72); font-size:clamp(.55rem,1vw,1rem); }
+    .tv-main { min-height:0; flex:1; display:grid; grid-template-columns:24% 1fr 29%; gap:2.5%; align-items:center; padding:2.7% 0; }
+    .clock-zone { text-align:center; display:flex; flex-direction:column; align-items:center; gap:1rem; }
+    .clock { color:var(--gold); font:700 clamp(2.2rem,7.7vw,8rem)/1 'JetBrains Mono',monospace; letter-spacing:-.07em; }
+    .clock.small { font-size:clamp(1.5rem,4.4vw,4.8rem); }
+    .date-stack { display:flex; flex-direction:column; align-items:center; gap:.25rem; font-size:clamp(.6rem,1.1vw,1.15rem); }
+    .hijri { color:var(--gold); }
+    .next { text-align:center; color:var(--muted); font-size:clamp(.52rem,1vw,.95rem); text-transform:uppercase; letter-spacing:.18em; }
+    .next strong { display:block; color:var(--gold); font:700 clamp(1.1rem,2.2vw,2.3rem)/1.2 'JetBrains Mono',monospace; letter-spacing:0; margin-top:.3rem; }
+    .panel { background:rgba(11,29,58,.88); border:1px solid rgba(246,190,60,.22); border-radius:12px; overflow:hidden; }
+    .panel-title { padding:.65rem .85rem; color:#101b2d; background:var(--gold); font-size:clamp(.58rem,1vw,1rem); font-weight:700; text-transform:uppercase; letter-spacing:.12em; }
+    .prayers { display:flex; flex-direction:column; gap:.2rem; padding:.5rem; }
+    .prayer { display:flex; justify-content:space-between; align-items:center; padding:.45rem .6rem; border-radius:7px; font-size:clamp(.6rem,1.15vw,1.05rem); }
+    .prayer time { font:700 clamp(.68rem,1.35vw,1.3rem) 'JetBrains Mono',monospace; }
+    .prayer.active { color:#101b2d; background:var(--gold); }
+    .photo-panel { height:100%; min-height:0; display:flex; flex-direction:column; gap:.6rem; }
+    .photo { flex:1; min-height:0; background-size:cover; background-position:center; border-radius:12px; border:2px solid var(--gold); }
+    .content-card { min-height:30%; padding:.75rem; background:rgba(11,29,58,.93); border-radius:10px; border-left:3px solid var(--emerald); }
+    .content-card small { color:var(--gold); text-transform:uppercase; letter-spacing:.1em; }
+    .content-card strong { display:block; margin:.3rem 0; font-size:clamp(.7rem,1.35vw,1.25rem); }
+    .content-card p { color:var(--muted); font-size:clamp(.58rem,1vw,1rem); line-height:1.3; }
+    .ticker { flex-shrink:0; display:flex; overflow:hidden; align-items:center; background:rgba(255,255,255,.94); color:#071429; border-radius:5px; }
+    .ticker-label { flex-shrink:0; padding:.5rem .8rem; background:var(--gold); font-size:clamp(.6rem,1vw,1rem); font-weight:700; text-transform:uppercase; }
+    .ticker-track { white-space:nowrap; animation:marquee 28s linear infinite; padding:.5rem 0; font-size:clamp(.58rem,1vw,1rem); }
+    @keyframes marquee { from{transform:translateX(100%)} to{transform:translateX(-100%)} }
+    @keyframes pulse { 50%{box-shadow:0 0 0 10px rgba(246,190,60,.1)} }
+    .countdown-near { animation:pulse 1.8s infinite; border-radius:8px; }
+    .screen[data-layout="ultra"] .screen-bg { opacity:.72; }
+    .screen[data-layout="ultra"] .tv-main { display:block; position:relative; }
+    .screen[data-layout="ultra"] .tv-main > .panel { position:absolute; inset:auto 0 0; z-index:2; }
+    .screen[data-layout="ultra"] .clock-zone { position:absolute; inset:7% 0 auto; z-index:2; }
+    .screen[data-layout="ultra"] .photo-panel { height:100%; }
+    .screen[data-layout="simplicity"] .tv-main { grid-template-columns:1fr; }
+    .screen[data-layout="simplicity"] .tv-main > .panel,.screen[data-layout="simplicity"] .photo-panel { display:none; }
+    .screen[data-layout="simplicity"] .clock { font-size:clamp(3rem,11vw,10rem); }
+    .screen[data-layout="cinematic"] .screen-bg { opacity:.62; }
+    .screen[data-layout="cinematic"] .tv-main { grid-template-columns:28% 1fr 32%; }
+    .screen[data-layout="horizontal"] .tv-main { grid-template-columns:1fr; }
+    .screen[data-layout="horizontal"] .tv-main > .panel { order:3; }
+    .screen[data-layout="horizontal"] .photo-panel { display:none; }
+    .screen[data-layout="horizontal"] .clock-zone { flex-direction:row; justify-content:center; gap:4%; }
+    .screen[data-layout="vertical"] .tv-main { grid-template-columns:31% 1fr; }
+    .screen[data-layout="vertical"] .photo-panel { display:flex; }
+    .screen[data-layout="digital"] .tv-main { grid-template-columns:1fr; }
+    .screen[data-layout="digital"] .tv-main > .panel,.screen[data-layout="digital"] .photo-panel,.screen[data-layout="digital"] .date-stack { display:none; }
+    .screen[data-layout="digital"] .clock { font-size:clamp(3rem,12vw,12rem); }
+    .screen[data-layout="focus"] .tv-main { grid-template-columns:1fr 28%; }
+    .screen[data-layout="focus"] .photo-panel { display:none; }
+    .screen[data-layout="focus"] .clock-zone { gap:1.5rem; }
+    .screen[data-layout="focus"] .clock { font-size:clamp(3rem,9vw,9rem); }
+    .controls { border-left:1px solid var(--line); padding:1.2rem; background:rgba(3,10,20,.44); overflow:auto; }
+    .controls h2 { margin:0 0 .25rem; font-size:1.2rem; }
+    .controls-intro { color:var(--muted); font-size:.78rem; line-height:1.45; margin-bottom:1rem; }
+    .tabs { display:grid; grid-template-columns:repeat(3,1fr); gap:.3rem; margin-bottom:1rem; }
+    .tab { border:1px solid var(--line); color:var(--muted); background:transparent; padding:.5rem .2rem; border-radius:7px; font-size:.72rem; }
+    .tab.active { color:#101b2d; background:var(--gold); border-color:var(--gold); font-weight:700; }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:block; }
+    fieldset { border:0; padding:0; margin:0 0 1rem; }
+    legend { color:var(--gold); font-size:.7rem; font-weight:700; letter-spacing:.13em; text-transform:uppercase; margin-bottom:.65rem; }
+    .field { display:grid; gap:.3rem; margin-bottom:.7rem; }
+    .field label { color:var(--muted); font-size:.72rem; }
+    .field input,.field select,.field textarea { width:100%; border:1px solid var(--line); border-radius:7px; padding:.55rem .6rem; outline:0; color:var(--white); background:#0b1d3a; font-size:.8rem; }
+    .field input:focus,.field select:focus,.field textarea:focus { border-color:var(--gold); }
+    .field input[type=color] { height:2.3rem; padding:.15rem; }
+    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:.55rem; }
+    .switch-row { display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:.78rem; margin:.8rem 0; }
+    .switch-row input { accent-color:var(--gold); width:1.05rem; height:1.05rem; }
+    .layout-grid { display:grid; grid-template-columns:1fr 1fr; gap:.45rem; }
+    .layout-option { text-align:left; border:1px solid var(--line); background:#0b1d3a; color:var(--white); padding:.55rem; border-radius:7px; font-size:.72rem; }
+    .layout-option b { display:block; color:var(--gold); margin-bottom:.2rem; }
+    .layout-option.active { border-color:var(--gold); background:#10294a; }
+    .save-note { min-height:1.4rem; color:var(--emerald); font-size:.75rem; margin-top:.7rem; }
+    .overlay { position:absolute; inset:0; z-index:5; display:none; align-items:center; justify-content:center; background:rgba(1,6,14,.86); backdrop-filter:blur(10px); text-align:center; }
+    .overlay.visible { display:flex; }
+    .overlay-box { padding:3rem; border:2px solid var(--gold); border-radius:16px; background:#050c1a; min-width:40%; box-shadow:0 0 70px rgba(246,190,60,.16); }
+    .overlay-box small { color:var(--gold); text-transform:uppercase; letter-spacing:.2em; }
+    .overlay-box h2 { margin:1rem 0; font-size:clamp(2rem,5vw,5rem); }
+    .overlay-box strong { display:block; color:var(--gold); font:700 clamp(2rem,6vw,6rem) 'JetBrains Mono',monospace; }
+    .hidden { display:none !important; }
+    @media (max-width:980px) { .workspace{grid-template-columns:1fr}.controls{border-left:0;border-top:1px solid var(--line)} .screen-wrap{padding:1rem}.controls{max-height:none}.screen{min-height:420px} }
+    @media (max-width:620px) { .topbar{padding:.8rem}.brand span{display:none}.screen{min-height:300px}.tv-content{padding:4%}.tv-main{grid-template-columns:1fr 1.1fr;gap:3%;}.photo-panel{display:none}.clock{font-size:clamp(2rem,9vw,4.5rem)}.prayer{padding:.3rem}.mosque-address{display:none}.controls{padding:1rem}.layout-grid{grid-template-columns:1fr 1fr} }
   </style>
 </head>
 <body>
-<div id="app"></div>
-
-<!-- ASIDE PENGATURAN DIPISAHKAN DARI TAMPILAN UTAMA KANVAS -->
-<aside class="settings" id="settings">
-  <div class="settings-header">
-    <h2>Pengaturan Display</h2>
-    <button class="close-icon-btn" id="closeHeaderBtn">&times;</button>
-  </div>
-  <p class="layout-note">Perubahan disimpan di perangkat ini.</p>
-  <div class="setting"><label>Layout</label><select id="layoutInput"></select></div>
-  <div class="setting"><label>Nama masjid</label><input id="nameInput"></div>
-  <div class="setting"><label>Alamat</label><input id="addressInput"></div>
-  <div class="colors">
-    <div class="setting"><label>Latar</label><input type="color" id="bgInput"></div>
-    <div class="setting"><label>Aksen</label><input type="color" id="accentInput"></div>
-    <div class="setting"><label>Panel</label><input type="color" id="primaryInput"></div>
-    <div class="setting"><label>Teks</label><input type="color" id="textInput"></div>
-  </div>
-  <div class="setting">
-    <label><input type="checkbox" id="hijriInput"> Tampilkan tanggal Hijriah</label>
-    <label><input type="checkbox" id="imsakInput"> Tampilkan Imsak</label>
-    <label><input type="checkbox" id="tickerInput"> Tampilkan running text</label>
-  </div>
-  <div class="actions">
-    <button class="save" id="saveBtn">Simpan</button>
-    <button class="reset" id="resetBtn">Reset</button>
-    <button class="close" id="closeBtn">Batal</button>
-  </div>
-</aside>
-
-<script>
-(() => {
-  const KEY = 'masjid-display-standalone-v2';
-  const imageFallback = 'https://images.unsplash.com/photo-1512632578888-169bbbc64f33?auto=format&fit=crop&w=1600&q=80';
-  const demo = {mosque:{name:'Masjid Raya Al-Muhajirin',address:'Jl. Kebajikan No. 12',city:'Jakarta Selatan',timezone:'Asia/Jakarta',logo_url:'',photo_url:imageFallback},prayer_times:{times:{imsak:'04:25',subuh:'04:35',syuruq:'05:52',dzuhur:'11:58',ashar:'15:18',maghrib:'17:56',isya:'19:08'},hijri:{formatted:'3 Rabiul Awal 1448 H'},gregorian_formatted:''},layout:{key:'signature',config:{primary_color:'#0b1d3a',secondary_color:'#061325',accent_color:'#f6be3c',text_color:'#f8fafc',bg_color:'#061325',panel_opacity:.9}},slides:[{url:imageFallback,title:'Masjid'}],info_slides:[{id:'welcome',slide_type:'pengumuman',title:'Selamat Datang',body:'Semoga ibadah kita diterima Allah SWT.',is_active:true}],donation:null,events:[],running_texts:[{id:'welcome',text:'Mari makmurkan masjid dengan shalat berjamaah',is_active:true}],settings:{slideshow_enabled:true,slideshow_interval:12,show_imsak:true,show_hijri:true,show_running_text:true},azan:{enabled:true,message:'Waktu Azan',duration_minutes:2},iqamah:{enabled:true,offsets:{subuh:10,dzuhur:10,ashar:10,maghrib:5,isya:10},message:'Menuju iqamah'}};
-  const labels={imsak:'Imsak',subuh:'Subuh',syuruq:'Syuruq',dzuhur:'Dzuhur',ashar:'Ashar',maghrib:'Maghrib',isya:'Isya'};
-  let data = load(); let slideIndex=0; let contentIndex=0; let isBuilt=false;
-
-  function load(){try{return Object.assign(structuredClone(demo),JSON.parse(localStorage.getItem(KEY)||'{}'))}catch{return structuredClone(demo)}}
-  function save(){localStorage.setItem(KEY,JSON.stringify(data))}
-  function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-  function nowParts(){return new Intl.DateTimeFormat('id-ID',{timeZone:data.mosque.timezone||'Asia/Jakarta',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false,weekday:'long',day:'numeric',month:'long',year:'numeric'}).formatToParts(new Date()).reduce((o,p)=>(o[p.type]=p.value,o),{})}
-  function seconds(){const p=nowParts();return (+p.hour||0)*3600+(+p.minute||0)*60+(+p.second||0)}
-  function phase(){const n=seconds(), entries=Object.entries(data.prayer_times.times||{}).filter(([k])=>k!=='imsak'||data.settings.show_imsak).map(([k,v])=>({k,s:+v.slice(0,2)*3600+ +v.slice(3)*60})).sort((a,b)=>a.s-b.s);let next=entries.find(x=>x.s>n)||entries[0]||{k:'subuh',s:0};let current=[...entries].reverse().find(x=>x.s<=n);let countdown=(next.s-n+86400)%86400;let state='normal';if(current&&data.azan.enabled&&n-current.s<60)state='azan';else if(current&&data.iqamah.enabled&&n>=current.s+60&&n<current.s+((data.iqamah.offsets||{})[current.k]||10)*60+60)state='iqamah';return {next,current,countdown,state}}
-  function fmtCountdown(s){s=Math.max(0,s);return [Math.floor(s/3600),Math.floor(s/60)%60,s%60].map(x=>String(x).padStart(2,'0')).join(':')}
-  function dateLines(p){return `${p.weekday}, ${p.day} ${p.month} ${p.year}`}
-  function activeContent(){const all=[...(data.donation&&data.donation.is_active?[data.donation]:[]),...(data.info_slides||[]).filter(x=>x.is_active)];return all.length?all[contentIndex%all.length]:null}
-
-  function buildUI(){
-    const cfg=data.layout.config||demo.layout.config;
-    const layout=data.layout.key||'signature';
-    const keys=Object.keys(labels).filter(k=>k!=='imsak'||data.settings.show_imsak);
-    const rows=keys.map(k=>`<div class="prayer" id="prayer-${k}"><span>${labels[k]}</span><b>${esc(data.prayer_times.times[k]||'--:--')}</b></div>`).join('');
-    const ticker=(data.settings.show_running_text?(data.running_texts||[]).filter(x=>x.is_active).map(x=>x.text).join(' • '):'')||'';
-
-    document.getElementById('app').innerHTML=`
-      <div class="screen layout-${esc(layout)}" id="screenEl">
-        <div class="grain"></div>
-        <div class="gold-line"></div>
-        <div class="tools">
-          <button class="tool" id="settingsBtn" title="Pengaturan">⚙</button>
-          <button class="tool" id="fullBtn" title="Layar penuh">⛶</button>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand"><div class="brand-mark">☪</div><div><strong>Masjid Display</strong><span>Mode mandiri • tersimpan di perangkat ini</span></div></div>
+      <div class="top-actions"><button class="icon-btn" id="fullscreenBtn" title="Layar penuh">⛶</button><button class="icon-btn" id="settingsBtn" title="Buka pengaturan">⚙</button></div>
+    </header>
+    <main class="workspace">
+      <section class="screen-wrap"><div class="screen" id="screen">
+        <div class="screen-bg" id="screenBg"></div>
+        <div class="tv-content" id="tvContent">
+          <div class="tv-header"><img class="logo" id="logo" alt="Logo masjid"><div><div class="mosque-name" id="mosqueName"></div><div class="mosque-address" id="mosqueAddress"></div></div></div>
+          <div class="tv-main"><div class="panel"><div class="panel-title">Jadwal shalat</div><div class="prayers" id="prayers"></div></div><div class="clock-zone"><div class="clock" id="clock"></div><div class="date-stack"><div class="date-line" id="dateLine"></div><div class="hijri" id="hijri"></div></div><div class="next" id="nextPrayer"></div></div><div class="photo-panel"><div class="photo" id="photo"></div><div class="content-card" id="contentCard"></div></div></div>
+          <div class="ticker" id="ticker"><div class="ticker-label">Info</div><div class="ticker-track" id="tickerText"></div></div>
         </div>
-        <header class="header">
-          ${cfg.logo_position!=='hidden'&&data.mosque.logo_url?`<img class="logo" src="${esc(data.mosque.logo_url)}" alt="Logo">`:''}
-          <div class="header-copy">
-            <div class="name">${esc(data.mosque.name)}</div>
-            <div class="address">${esc(data.mosque.address)}${data.mosque.city?', '+esc(data.mosque.city):''}</div>
-          </div>
-        </header>
-        <main class="main">
-          <section class="left panel">
-            <div class="prayer-title">Jadwal Shalat</div>
-            <div class="prayers">${rows}</div>
-          </section>
-          <section class="center">
-            <div class="clock" id="clockEl">--:--:--</div>
-            <div class="date"><div id="gregorianEl">--</div><div id="hijriEl">${data.settings.show_hijri?esc(data.prayer_times.hijri?.formatted||''):''}</div></div>
-            <div class="next-label" id="nextLabelEl">Menuju --</div>
-            <div class="countdown" id="countdownEl">00:00:00</div>
-          </section>
-          <section class="media">
-            <div class="photo" id="photoEl"></div>
-            <div class="content" id="contentEl"></div>
-          </section>
-        </main>
-        <div class="ticker" id="tickerEl" style="${data.settings.show_running_text?'':'display:none'}"><div class="ticker-label">INFO</div><div class="ticker-track"><span>${esc(ticker)}</span><span>${esc(ticker)}</span></div></div>
-        <div class="hint">Klik area kosong untuk layar penuh</div>
-        <div class="overlay" id="overlayEl">
-          <div class="overlay-card">
-            <strong id="overlayTitle">WAKTU AZAN</strong>
-            <span id="overlayMsg"></span>
-          </div>
-        </div>
-      </div>
-    `;
-
-    bindDisplayEvents();
-    isBuilt = true;
-    updateMediaContent();
-  }
-
-  function syncFormValues(){
-    const cfg=data.layout.config||demo.layout.config;
-    const layout=data.layout.key||'signature';
-    
-    document.getElementById('layoutInput').innerHTML = ['signature','ultra_wide','simplicity','cinematic','horizontal','vertical','digital_clock','prayer_focus'].map(x=>`<option ${x===layout?'selected':''} value="${x}">${x.replace('_',' ').toUpperCase()}</option>`).join('');
-    document.getElementById('nameInput').value = data.mosque.name || '';
-    document.getElementById('addressInput').value = data.mosque.address || '';
-    document.getElementById('bgInput').value = cfg.bg_color || '#061325';
-    document.getElementById('accentInput').value = cfg.accent_color || '#f6be3c';
-    document.getElementById('primaryInput').value = cfg.primary_color || '#0b1d3a';
-    document.getElementById('textInput').value = cfg.text_color || '#f8fafc';
-    document.getElementById('hijriInput').checked = !!data.settings.show_hijri;
-    document.getElementById('imsakInput').checked = !!data.settings.show_imsak;
-    document.getElementById('tickerInput').checked = !!data.settings.show_running_text;
-  }
-
-  function updateTick(){
-    if(!isBuilt) buildUI();
-
-    const cfg=data.layout.config||demo.layout.config;
-    const p=nowParts(), ph=phase();
-
-    document.documentElement.style.cssText=`--bg:${cfg.bg_color};--surface:${cfg.primary_color};--primary:${cfg.primary_color};--secondary:${cfg.secondary_color};--accent:${cfg.accent_color};--text:${cfg.text_color};--panel:${cfg.panel_opacity};--hero:url('${esc((data.slides||[])[slideIndex%(data.slides||[]).length]?.url||data.mosque.photo_url||imageFallback)}')`;
-
-    document.getElementById('clockEl').textContent = `${p.hour||'00'}:${p.minute||'00'}:${p.second||'00'}`;
-    document.getElementById('gregorianEl').textContent = dateLines(p);
-    document.getElementById('nextLabelEl').textContent = `Menuju ${labels[ph.next.k]||ph.next.k}`;
-
-    const cdEl = document.getElementById('countdownEl');
-    cdEl.textContent = fmtCountdown(ph.countdown);
-    cdEl.classList.toggle('soon', ph.countdown <= 600);
-
-    Object.keys(labels).forEach(k => {
-      const el = document.getElementById(`prayer-${k}`);
-      if(el) el.classList.toggle('active', ph.next.k === k);
-    });
-
-    const overlay = document.getElementById('overlayEl');
-    if(ph.state !== 'normal') {
-      overlay.classList.add('show');
-      document.getElementById('overlayTitle').textContent = ph.state === 'azan' ? 'WAKTU AZAN' : 'IQAMAH';
-      document.getElementById('overlayMsg').textContent = ph.state === 'azan' ? data.azan.message : data.iqamah.message;
-    } else {
-      overlay.classList.remove('show');
-    }
-  }
-
-  function updateMediaContent(){
-    if(!isBuilt) return;
-    const slides=(data.slides||[]);
-    const photoEl = document.getElementById('photoEl');
-    if(slides.length) {
-      photoEl.innerHTML = `<img src="${esc(slides[slideIndex%slides.length].url)}" alt="${esc(slides[slideIndex%slides.length].title||'Masjid')}">`;
-    }
-
-    const c=activeContent();
-    const contentEl = document.getElementById('contentEl');
-    if(c) {
-      contentEl.innerHTML = c.qr_url 
-        ? `<h2>${esc(c.title)}</h2><p>${esc(c.text)}</p><div class="bank">${esc(c.bank_name||'')} ${esc(c.account_number||'')}</div>`
-        : `<h2>${esc(c.title)}</h2><p>${esc(c.body)}</p>`;
-    } else {
-      contentEl.innerHTML = '';
-    }
-  }
-
-  function bindDisplayEvents(){
-    const settings = document.getElementById('settings');
-    
-    document.getElementById('settingsBtn').onclick = (e) => {
-      e.stopPropagation();
-      syncFormValues();
-      settings.classList.add('open');
-    };
-
-    document.getElementById('fullBtn').onclick = (e) => {
-      e.stopPropagation();
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen?.().catch(()=>{});
-      } else {
-        document.exitFullscreen?.().catch(()=>{});
-      }
-    };
-  }
-
-  function bindSettingsEvents(){
-    const settings = document.getElementById('settings');
-
-    const closeSettings = (e) => {
-      if(e) e.stopPropagation();
-      settings.classList.remove('open');
-    };
-
-    document.getElementById('closeBtn').onclick = closeSettings;
-    document.getElementById('closeHeaderBtn').onclick = closeSettings;
-
-    document.getElementById('saveBtn').onclick = (e) => {
-      e.stopPropagation();
-      const c = data.layout.config;
-      data.layout.key = document.getElementById('layoutInput').value;
-      data.mosque.name = document.getElementById('nameInput').value;
-      data.mosque.address = document.getElementById('addressInput').value;
-      c.bg_color = document.getElementById('bgInput').value;
-      c.accent_color = document.getElementById('accentInput').value;
-      c.primary_color = document.getElementById('primaryInput').value;
-      c.text_color = document.getElementById('textInput').value;
-      data.settings.show_hijri = document.getElementById('hijriInput').checked;
-      data.settings.show_imsak = document.getElementById('imsakInput').checked;
-      data.settings.show_running_text = document.getElementById('tickerInput').checked;
-      save();
-      isBuilt = false;
-      buildUI();
-      updateTick();
-      settings.classList.remove('open');
-    };
-
-    document.getElementById('resetBtn').onclick = (e) => {
-      e.stopPropagation();
-      data = structuredClone(demo);
-      save();
-      isBuilt = false;
-      buildUI();
-      updateTick();
-      syncFormValues();
-      settings.classList.remove('open');
-    };
-
-    settings.onclick = (e) => e.stopPropagation();
-  }
-
-  setInterval(updateTick, 1000);
-  setInterval(()=>{ if(data.slides?.length>1){slideIndex++; updateMediaContent();} }, 12000);
-  setInterval(()=>{ contentIndex++; updateMediaContent(); }, 10000);
-  
-  bindSettingsEvents();
-  buildUI();
-  updateTick();
-})();
-</script>
+        <div class="overlay" id="phaseOverlay"><div class="overlay-box"><small id="phaseLabel">Waktu shalat</small><h2 id="phaseTitle">Azan</h2><strong id="phaseCountdown">00:00</strong></div></div>
+      </div></section>
+      <aside class="controls" id="controls"><h2>Pengaturan display</h2><p class="controls-intro">Atur tampilan, jadwal, konten, dan perilaku layar. Perubahan tersimpan otomatis di browser ini.</p>
+        <div class="tabs"><button class="tab active" data-tab="profile">Profil</button><button class="tab" data-tab="display">Tampilan</button><button class="tab" data-tab="content">Konten</button></div>
+        <div class="tab-panel active" id="tab-profile"><fieldset><legend>Identitas masjid</legend><div class="field"><label>Nama masjid</label><input data-bind="mosque.name"></div><div class="field"><label>Alamat</label><input data-bind="mosque.address"></div><div class="grid-2"><div class="field"><label>Kota</label><input data-bind="mosque.city"></div><div class="field"><label>Zona waktu</label><select data-bind="mosque.timezone"><option>Asia/Jakarta</option><option>Asia/Makassar</option><option>Asia/Jayapura</option><option>Asia/Kuala_Lumpur</option><option>Asia/Riyadh</option><option>UTC</option></select></div></div><div class="field"><label>Logo URL</label><input data-bind="mosque.logo" placeholder="https://..."></div><div class="field"><label>Foto masjid URL</label><input data-bind="mosque.photo" placeholder="https://..."></div></fieldset><fieldset><legend>Jadwal</legend><div class="grid-2" id="prayerInputs"></div></fieldset></div>
+        <div class="tab-panel" id="tab-display"><fieldset><legend>Layout template</legend><div class="layout-grid" id="layoutOptions"></div></fieldset><fieldset><legend>Warna dan ukuran</legend><div class="grid-2"><div class="field"><label>Warna latar</label><input type="color" data-bind="theme.bg"></div><div class="field"><label>Warna aksen</label><input type="color" data-bind="theme.accent"></div><div class="field"><label>Warna panel</label><input type="color" data-bind="theme.panel"></div><div class="field"><label>Ukuran jam</label><input type="range" min="70" max="140" data-bind="theme.clockSize"></div></div></fieldset><label class="switch-row">Tampilkan tanggal Hijriah <input type="checkbox" data-bind="settings.showHijri"></label><label class="switch-row">Tampilkan running text <input type="checkbox" data-bind="settings.showTicker"></label><button class="primary-btn" id="wakeBtn">Aktifkan layar terus menyala</button></div>
+        <div class="tab-panel" id="tab-content"><fieldset><legend>Running text</legend><div class="field"><label>Pesan berjalan</label><textarea rows="3" data-bind="content.ticker"></textarea></div><div class="field"><label>Interval slideshow (detik)</label><input type="number" min="5" max="120" data-bind="settings.slideInterval"></div></fieldset><fieldset><legend>Azan dan iqamah</legend><label class="switch-row">Aktifkan overlay azan <input type="checkbox" data-bind="settings.azan"></label><div class="grid-2"><div class="field"><label>Durasi azan (menit)</label><input type="number" min="1" max="15" data-bind="settings.azanDuration"></div><div class="field"><label>Jeda iqamah (menit)</label><input type="number" min="1" max="30" data-bind="settings.iqamahOffset"></div></div></fieldset><fieldset><legend>Pengumuman</legend><div class="field"><label>Judul</label><input data-bind="content.title"></div><div class="field"><label>Isi pengumuman</label><textarea rows="3" data-bind="content.body"></textarea></div></fieldset><button class="ghost-btn" id="resetBtn">Kembalikan contoh awal</button></div>
+        <div class="save-note" id="saveNote"></div>
+      </aside>
+    </main>
+  </div>
+  <script>
+    const KEY='masjid-display-standalone-v1';
+    const layouts={signature:'Signature',ultra:'Ultra Wide',simplicity:'Simplicity',cinematic:'Cinematic',horizontal:'Horizontal',vertical:'Vertical',digital:'Digital Clock',focus:'Prayer Focus'};
+    const prayerNames={imsak:'Imsak',subuh:'Subuh',syuruq:'Syuruq',dzuhur:'Dzuhur',ashar:'Ashar',maghrib:'Maghrib',isya:'Isya'};
+    const defaults={mosque:{name:'Masjid Al-Ikhlas',address:'Jl. Kedamaian No. 12',city:'Jakarta',timezone:'Asia/Jakarta',logo:'https://images.unsplash.com/photo-1542816417-0983c9c9ad53?w=160&q=80',photo:'https://images.unsplash.com/photo-1537181534458-45dcee76ae90?w=1600&q=85'},prayers:{imsak:'04:28',subuh:'04:38',syuruq:'05:54',dzuhur:'12:02',ashar:'15:20',maghrib:'18:04',isya:'19:15'},theme:{layout:'signature',bg:'#061325',accent:'#f6be3c',panel:'#0b1d3a',clockSize:100},settings:{showHijri:true,showTicker:true,slideInterval:15,azan:true,azanDuration:4,iqamahOffset:10},content:{ticker:'Kajian rutin setiap Jumat setelah Maghrib • Jaga kebersihan dan ketenangan masjid',title:'Kajian Pekanan',body:'Mari hadir dalam majelis ilmu dan rapatkan saf.'}};
+    let state=JSON.parse(localStorage.getItem(KEY)||'null')||structuredClone(defaults); if(!localStorage.getItem(KEY))localStorage.setItem(KEY,JSON.stringify(state)); let slideIndex=0; let wake=null;
+    const $=s=>document.querySelector(s); const $$=s=>[...document.querySelectorAll(s)];
+    function get(path){return path.split('.').reduce((o,k)=>o?.[k],state)} function set(path,value){const p=path.split('.');const last=p.pop();const obj=p.reduce((o,k)=>o[k],state);obj[last]=value;localStorage.setItem(KEY,JSON.stringify(state));$('#saveNote').textContent='Tersimpan otomatis';render();}
+    function clockParts(){const parts=new Intl.DateTimeFormat('en-GB',{timeZone:state.mosque.timezone,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(new Date());const o=Object.fromEntries(parts.map(x=>[x.type,x.value]));return {text:`${o.hour}:${o.minute}:${o.second}`,seconds:+o.hour*3600 + +o.minute*60 + +o.second};}
+    function secs(v){const [h,m]=v.split(':').map(Number);return h*3600+m*60} function pad(n){return String(n).padStart(2,'0')} function countdown(n){n=Math.max(0,Math.floor(n));return `${pad(Math.floor(n/3600))}:${pad(Math.floor(n%3600/60))}:${pad(n%60)}`}
+    function phase(now){const keys=['subuh','dzuhur','ashar','maghrib','isya'];for(const key of keys){const t=secs(state.prayers[key]);if(now>=t&&now<t+state.settings.azanDuration*60)return {type:'azan',key,remaining:t+state.settings.azanDuration*60-now};if(state.settings.azan&&now>=t+state.settings.azanDuration*60&&now<t+(state.settings.azanDuration+state.settings.iqamahOffset)*60)return {type:'iqamah',key,remaining:t+(state.settings.azanDuration+state.settings.iqamahOffset)*60-now};}const upcoming=keys.map(key=>({key,t:secs(state.prayers[key])})).find(x=>x.t>now);return upcoming?{type:'normal',...upcoming,remaining:upcoming.t-now}:{type:'normal',key:'subuh',t:secs(state.prayers.subuh)+86400,remaining:secs(state.prayers.subuh)+86400-now};}
+    function dateText(){return new Intl.DateTimeFormat('id-ID',{timeZone:state.mosque.timezone,weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date())}
+    function render(){document.documentElement.style.setProperty('--navy',state.theme.bg);document.documentElement.style.setProperty('--gold',state.theme.accent);document.documentElement.style.setProperty('--navy-2',state.theme.panel);$('#mosqueName').textContent=state.mosque.name;$('#mosqueAddress').textContent=`${state.mosque.address}, ${state.mosque.city}`;$('#logo').src=state.mosque.logo;$('#screenBg').style.backgroundImage=`url('${state.mosque.photo}')`;$('#photo').style.backgroundImage=`url('${state.mosque.photo}')`;$('#clock').style.transform=`scale(${state.theme.clockSize/100})`;$('#clock').textContent=clockParts().text;$('#dateLine').textContent=dateText();$('#hijri').textContent=state.settings.showHijri?'15 Ramadan 1447 H':'';const ph=phase(clockParts().seconds);$('#nextPrayer').innerHTML=ph.type==='normal'?`Menuju ${prayerNames[ph.key]}<strong>${countdown(ph.remaining)}</strong>`:`${ph.type==='azan'?'Azan':'Iqamah'} ${prayerNames[ph.key]}<strong>${countdown(ph.remaining)}</strong>`;$('#nextPrayer').classList.toggle('countdown-near',ph.type==='normal'&&ph.remaining<600);$('#prayers').innerHTML=Object.entries(state.prayers).map(([k,v])=>`<div class="prayer ${k===ph.key?'active':''}"><span>${prayerNames[k]}</span><time>${v}</time></div>`).join('');$('#contentCard').innerHTML=`<small>Pengumuman</small><strong>${state.content.title}</strong><p>${state.content.body}</p>`;$('#ticker').classList.toggle('hidden',!state.settings.showTicker);$('#tickerText').textContent=state.content.ticker+' • '+state.content.ticker;$('#phaseOverlay').classList.toggle('visible',ph.type!=='normal'&&state.settings.azan);if(ph.type!=='normal'){ $('#phaseLabel').textContent=ph.type==='azan'?'Panggilan shalat':'Persiapan iqamah';$('#phaseTitle').textContent=`${ph.type==='azan'?'Azan':'Iqamah'} ${prayerNames[ph.key]}`;$('#phaseCountdown').textContent=countdown(ph.remaining)} $('#screen').dataset.layout=state.theme.layout;}
+    function bindFields(){ $$('[data-bind]').forEach(el=>{const path=el.dataset.bind;el.type==='checkbox'?el.checked=!!get(path):el.value=get(path)??'';el.oninput=()=>{let v=el.type==='checkbox'?el.checked:el.value;if(el.type==='number'||el.type==='range')v=Number(v);set(path,v)}}); }
+    function buildControls(){ $('#prayerInputs').innerHTML=Object.entries(prayerNames).map(([k,n])=>`<div class="field"><label>${n}</label><input type="time" data-bind="prayers.${k}"></div>`).join('');$('#layoutOptions').innerHTML=Object.entries(layouts).map(([k,n])=>`<button class="layout-option ${state.theme.layout===k?'active':''}" data-layout="${k}"><b>${n}</b>${k==='signature'?'Jadwal, jam, foto, dan ticker seimbang.':k==='ultra'?'Foto dominan dengan jadwal bawah.':k==='digital'?'Jam digital raksasa.':'Tampilan fokus layar masjid.'}</button>`).join('');$$('[data-layout]').forEach(b=>b.onclick=()=>{state.theme.layout=b.dataset.layout;localStorage.setItem(KEY,JSON.stringify(state));buildControls();bindFields();render()});bindFields();}
+    $$('.tab').forEach(b=>b.onclick=()=>{$$('.tab').forEach(x=>x.classList.toggle('active',x===b));$$('.tab-panel').forEach(x=>x.classList.toggle('active',x.id==='tab-'+b.dataset.tab))});
+    $('#settingsBtn').onclick=()=>$('#controls').scrollIntoView({behavior:'smooth'});$('#fullscreenBtn').onclick=()=>document.fullscreenElement?document.exitFullscreen():$('#screen').requestFullscreen().catch(()=>{});
+    $('#resetBtn').onclick=()=>{state=structuredClone(defaults);localStorage.setItem(KEY,JSON.stringify(state));buildControls();bindFields();render();$('#saveNote').textContent='Contoh awal dipulihkan'};
+    $('#wakeBtn').onclick=async()=>{try{wake=await navigator.wakeLock?.request('screen');$('#wakeBtn').textContent='Layar aktif terus menyala ✓'}catch(e){$('#wakeBtn').textContent='Tidak didukung browser ini'}};
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&wake?.release)navigator.wakeLock?.request('screen').then(x=>wake=x).catch(()=>{})});
+    buildControls();render();setInterval(render,1000);setInterval(()=>{slideIndex++;render()},Math.max(5,Number(state.settings.slideInterval))*1000);
+  </script>
 </body>
 </html>
